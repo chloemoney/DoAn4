@@ -2,10 +2,15 @@ import os
 from datetime import datetime
 import pytest
 from Page.login_page import LoginPage
-from Utils.data_reader import read_csv_data
+from Utils.data_reader import get_data
 
-# Load test data
-test_data = read_csv_data("Data/data_login.csv")
+
+DATA_FILE = "Data/data_login.xlsx"
+DATA_TYPE = "xlsx"
+
+
+
+test_data = get_data(DATA_FILE, DATA_TYPE)
 all_results = []
 
 
@@ -15,9 +20,9 @@ class TestLogin:
     def test_login(self, driver, row):
         login_page = LoginPage(driver)
 
-        email = row["email"]
-        password = row["password"]
-        expected_result = row["expected"]
+        email = row.get("email", "")
+        password = row.get("password", "")
+        expected_result = row.get("expected", "")
         test_name = f"test_login_{email if email else 'no_email'}"
 
         actual_result = ""
@@ -42,8 +47,9 @@ class TestLogin:
             if not actual_result:
                 actual_result = str(e)
 
-        print(f"kết quả mong đợi {expected_result}")
-        print(f"kết quả thuc te {actual_result}")
+        print(f"\n Email: {email}")
+        print(f"🔸 Expected: {expected_result}")
+        print(f"🔸 Actual: {actual_result}")
 
         all_results.append({
             "Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

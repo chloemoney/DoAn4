@@ -6,20 +6,15 @@ from selenium.common.exceptions import NoSuchElementException
 class LoginPage:
     def __init__(self, driver):
         self.driver = driver
-        # Link mở popup login
         self.login_link = (By.CSS_SELECTOR, "a[id='site-account-handle'] span[class='icon-box-text']")
-        # Trường email (theo name)
         self.email_field = (By.CSS_SELECTOR, "input[name='customer[email]']")
-        # Trường password
         self.password_field = (By.CSS_SELECTOR, "input[name='customer[password]']")
-        # Nút đăng nhập
         self.login_button = (By.CSS_SELECTOR, "#form_submit-login")
 
     def open(self, url):
         self.driver.get(url)
 
     def login(self, email, password):
-        # Click mở form login
         self.driver.find_element(*self.login_link).click()
 
         email_input = self.driver.find_element(*self.email_field)
@@ -51,7 +46,6 @@ class LoginPage:
             if password_input.get_attribute("validationMessage"):
                 return password_input.get_attribute("validationMessage")
 
-            # Có thể có alert/message khác (tùy HTML của swe.vn sau khi login fail)
             return ""
         except NoSuchElementException:
             return ""

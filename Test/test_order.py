@@ -1,68 +1,80 @@
-from datetime import datetime
+import time
 import pytest
-from Page.order_page import OrderPage
-from Utils.data_reader import read_csv_data
-from Utils.test_result_writer_excel import write_test_results_excel
-
-BASE_URL = "https://swe.vn/"
-all_results = []  # Lưu toàn bộ kết quả test để ghi 1 lần sau cùng
+from datetime import datetime
+from Page.order_page import CheckoutPage
+from Utils.data_reader import get_data   # ✅ thay vì read_csv
+from Utils.test_result_writer_excel import ExcelReporter
 
 
-@pytest.mark.parametrize("keyword,quantity", read_csv_data("Data/data_order.csv"))
-def test_order_flow(driver, keyword, quantity):
-    """
-    Kiểm thử luồng đặt hàng cơ bản:
-    - Tìm sản phẩm
-    - Chọn sản phẩm đầu tiên
-    - Tăng số lượng
-    - Thêm vào giỏ hàng
-    - Mở giỏ hàng
-    - Kiểm tra thông báo
-    """
-    test_name = f"Order_{keyword}_{quantity}"
-    page = OrderPage(driver)
-    page.open(BASE_URL)
+DATA_FILE = "Data/data_order.json"    # ← đổi sang .csv hoặc .xlsx khi cần
+DATA_TYPE = "json"                    # ← đổi tương ứng: csv / json / excel
 
-    try:
-        # Thực hiện các bước
-        page.search_product(keyword)
-        page.click_first_result()
-        page.increase_quantity(quantity)
-        page.add_to_cart()
-        page.view_cart()
-        message = page.get_cart_message()
+# Đọc dữ liệu theo loại file
+test_data = get_data(DATA_FILE, DATA_TYPE)
 
-        # Kiểm tra kết quả
-        if any(word in message.lower() for word in ["giỏ hàng", "cart", "success", "thành công"]):
-            status = "PASS"
-        else:
-            status = "FAIL"
 
-        actual = message
+class TestCheckout:
 
-    except Exception as e:
+    @pytest.mark.parametrize("data", test_data)
+    def test_checkout_field_errors(self, driver, data):
+        page = CheckoutPage(driver)
+        reporter = ExcelReporter("report/test_results_order.xlsx")
+
+        keyword = data.get("keyword", "")
+        name = data.get("name", "")
+        phone = data.get("phone", "")
+        email = data.get("email", "")
+        province = data.get("province", "")
+        address = data.get("address", "")
+        expected = str(data.get("expected", "")).strip().lower()
+        test_name = f"checkout_{expected}_{keyword[:12]}"
+
+        actual_error = ""
         status = "FAIL"
-        actual = str(e)
 
-    # Ghi lại kết quả tạm thời
-    all_results.append({
-        "Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "Test Name": test_name,
-        "Keyword": keyword,
-        "Quantity": quantity,
-        "Actual": actual,
-        "Status": status
-    })
+        try:
+            # --- FLOW TEST ---
+            driver.get("https://swe.vn/")
+            page.search_product(keyword)
+            page.click_first_product()
+            page.add_to_cart()
+            page.go_to_checkout_from_popup()
+            page.fill_checkout_form(name, phone, email, province, address)
+            page.submit_order()
 
-    # Assertion cuối cùng để pytest đánh dấu pass/fail
-    assert status == "PASS", f"[{test_name}] Expected: Success - Actual: {actual}"
+            # --- KIỂM TRA LỖI HIỂN THỊ ---
+            if expected == "name":
+                actual_error = page.get_name_error()
+            elif expected == "phone":
+                actual_error = page.get_phone_error()
+            elif expected == "email":
+                actual_error = page.get_email_error()
+            elif expected == "address":
+                actual_error = page.get_address_error()
+            elif expected == "province":
+                actual_error = page.get_province_error()
 
+            if actual_error:
+                status = "PASS"
+            else:
+                raise AssertionError("Không thấy lỗi hiển thị đúng vị trí!")
 
-def teardown_module(module):
-    """Sau khi chạy xong module, ghi toàn bộ kết quả ra file Excel"""
-    if all_results:
-        write_test_results_excel(
-            all_results,
-            filename="Reports/test_results_order.xlsx",
-            sheet_name="Order Test Results"
-        )
+        except Exception as e:
+            actual_error = str(e)
+
+        finally:
+            reporter.write_result({
+                "Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "Test Name": test_name,
+                "Keyword": keyword,
+                "Name": name,
+                "Phone": phone,
+                "Email": email,
+                "Province": province,
+                "Address": address,
+                "Expected": expected,
+                "Actual Error": actual_error,
+                "Status": status
+            })
+
+        assert status == "PASS", f"[{test_name}] Expected '{expected}', got: {actual_error}"

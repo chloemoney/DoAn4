@@ -13,8 +13,8 @@ class BasePage:
         self.driver.get(url)
 
     def click(self, locator):
-        element = self.wait.until(EC.element_to_be_clickable(locator))
-        element.click()
+        el = self.wait.until(EC.element_to_be_clickable(locator))
+        el.click()
 
     def input_text(self, locator, text):
         el = self.wait.until(EC.visibility_of_element_located(locator))
@@ -27,7 +27,10 @@ class AddCartPage(BasePage):
     SEARCH_INPUT = (By.CSS_SELECTOR, "#inputSearchAuto")
     SEARCH_RESULTS = (By.CSS_SELECTOR, ".col-md-3.col-sm-6.col-xs-6.pro-loop")
     ADD_TO_CART = (By.CSS_SELECTOR, "#add-to-cart")
-    TOAST_MESSAGE = (By.CSS_SELECTOR,"div.header_dropdown_content.site_cart p.titlebox")
+    TOAST_MESSAGE = (By.CSS_SELECTOR, "div.header_dropdown_content.site_cart p.titlebox")
+    INCREASE_BTN = (By.CSS_SELECTOR, "input[value='+']")
+    VIEW_CART_BTN = (By.CSS_SELECTOR, ".linktocart.button.dark")
+    CART_QTY_INPUT = (By.CSS_SELECTOR, "input[name='updates[]'].line-item-qty")
 
     def search_product(self, keyword):
         el = self.input_text(self.SEARCH_INPUT, keyword)
@@ -37,8 +40,18 @@ class AddCartPage(BasePage):
     def open_first_product(self):
         items = self.wait.until(EC.presence_of_all_elements_located(self.SEARCH_RESULTS))
         if not items:
-            raise AssertionError("❌ Không tìm thấy sản phẩm nào sau khi tìm kiếm!")
-        items[0].click()  # ✅ click vào sản phẩm đầu tiên
+            raise AssertionError("Không tìm thấy sản phẩm nào sau khi tìm kiếm!")
+        items[0].click()
+
+    def increase_quantity(self, quantity):
+        """Click dấu '+' tương ứng số lượng cần thêm"""
+        try:
+            btn = self.wait.until(EC.element_to_be_clickable(self.INCREASE_BTN))
+            for i in range(int(quantity) - 1):  # click (quantity - 1) lần
+                btn.click()
+                time.sleep(0.6)  # delay nhỏ giữa mỗi click để web xử lý
+        except Exception as e:
+            raise AssertionError(f"Lỗi khi tăng số lượng: {e}")
 
     def add_to_cart(self):
         self.click(self.ADD_TO_CART)
@@ -51,3 +64,16 @@ class AddCartPage(BasePage):
             return el.text.strip()
         except:
             return ""
+
+    def view_cart(self):
+        self.click(self.VIEW_CART_BTN)
+        time.sleep(2)
+
+    def get_cart_quantity(self):
+        try:
+            qty_input = self.wait.until(
+                EC.visibility_of_element_located(self.CART_QTY_INPUT)
+            )
+            return int(qty_input.get_attribute("value"))
+        except:
+            raise AssertionError("Không tìm thấy ô nhập số lượng trong giỏ hàng!")

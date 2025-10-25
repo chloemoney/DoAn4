@@ -5,23 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e7ab707-0dbb-4db3-bc0f-eaf85613796e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/DoAn4_KTTD.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Page/login_page.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Page/order_page.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Page/product_page.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Page/search_page.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/test_login.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/test_order.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/test_product.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/test_search.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/data_reader.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utils/test_result_writer_excel.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/conftest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data/data_addcart.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data/data_login.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data/data_order.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data/data_search.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data/data_test.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Page/addcart2_page.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Page/test_page.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/test_Test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/test_addcart.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/test_addcart2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/data_addcart.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Data/data_addcart.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/data_order.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Data/data_order.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/data_search.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Data/data_search.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Page/login_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/Page/login_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Page/order_page.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Page/product_page.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/test_login.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test/test_login.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/test_order.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test/test_order.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/test_product.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utils/data_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils/data_reader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utils/test_result_writer_excel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils/test_result_writer_excel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/conftest.py" beforeDir="false" afterPath="$PROJECT_DIR$/conftest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/report/test_results_login.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/report/test_results_login.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/report/test_results_order.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/report/test_results_order.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/report/test_results_search.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/report/test_results_search.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,11 +59,15 @@
   &quot;keyToString&quot;: {
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-com.intellij.ml.llm.plugin.alert.claude.agent&quot;: &quot;Claude Agent is here&quot;,
+    &quot;Notification.DoNotAsk-com.intellij.ml.llm.plugin.alert.claude.agent&quot;: &quot;true&quot;,
     &quot;Python tests.Python tests for Test.test_login.TestLogin.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for Test.test_login.TestLogin.test_login.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for Test.test_search.TestSearch.test_search.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for Test.test_search.test_search_ddt.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_Test.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_addcart.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_addcart2.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_login.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_order.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_product.py.executor&quot;: &quot;Run&quot;,
@@ -62,11 +75,12 @@
     &quot;Python tests.Python tests in xf.py.executor&quot;: &quot;Run&quot;,
     &quot;Python.add_cart_page.executor&quot;: &quot;Run&quot;,
     &quot;Python.conftest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.data_reader.executor&quot;: &quot;Run&quot;,
     &quot;Python.search_page.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -80,6 +94,7 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PythonProject1\report" />
+      <recent name="D:\PythonProject1\Data" />
       <recent name="D:\PythonProject1" />
       <recent name="D:\PythonProject1\Utils" />
     </key>
@@ -210,6 +225,16 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Test/test_order.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/DoAn4_KTTD$add_cart_page.coverage" NAME="add_cart_page Coverage Results" MODIFIED="1759478160060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Page" />

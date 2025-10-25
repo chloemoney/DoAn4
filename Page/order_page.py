@@ -2,58 +2,135 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 
-class OrderPage:
-    def __init__(self, driver, timeout=10):
+
+class CheckoutPage:
+    def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, timeout)
+        self.wait = WebDriverWait(driver, 10)
 
-    def open(self, url):
-        self.driver.get(url)
-        self.driver.maximize_window()
+        # ====== INPUT LOCATORS (GIỮ NGUYÊN) ======
+        self.NAME = (By.NAME, "name")
+        self.PHONE = (By.NAME, "phone")
+        self.EMAIL = (By.NAME, "email")
+        self.PROVINCE = (By.NAME, "address")   # tên hơi sai nhưng giữ nguyên theo yêu cầu
+        self.ADDRESS = (By.NAME, "fulladdress")
+        self.SUBMIT_BTN = (By.ID, "place_order")
 
-    def click(self, by, locator):
-        self.wait.until(EC.element_to_be_clickable((by, locator))).click()
+        # ====== BUTTON LOCATORS (GIỮ NGUYÊN) ======
+        self.ADD_TO_CART = (By.CSS_SELECTOR, "#add-to-cart, button.add-to-cart")
+        self.CHECKOUT_BTN = (By.CSS_SELECTOR, ".linktocheckout.button.red, a[href*='checkout']")
 
-    def input_text(self, by, locator, text, submit=False):
-        el = self.wait.until(EC.visibility_of_element_located((by, locator)))
-        el.clear()
-        el.send_keys(text)
-        if submit:
-            el.submit()
-        return el
-
-    def get_text(self, by, locator, timeout=8):
+    # ================== HỖ TRỢ CƠ BẢN ==================
+    def safe_click(self, locator):
+        """Cuộn tới và click an toàn (tránh popup hoặc che khuất)."""
+        el = self.wait.until(EC.element_to_be_clickable(locator))
         try:
-            el = WebDriverWait(self.driver, timeout).until(
-                EC.visibility_of_element_located((by, locator))
-            )
-            return el.text.strip()
-        except:
-            return ""
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+            el.click()
+        except ElementClickInterceptedException:
+            self.driver.execute_script("arguments[0].click();", el)
+        time.sleep(1)
 
-    # ====== Functional actions ======
+    def _type(self, locator, value):
+        """Nhập dữ liệu an toàn vào ô input."""
+        try:
+            field = self.wait.until(EC.presence_of_element_located(locator))
+            field.clear()
+            if value:
+                field.send_keys(value)
+        except TimeoutException:
+            print(f" Không tìm thấy field {locator}")
+
+    # ================== LUỒNG NGHIỆP VỤ ==================
     def search_product(self, keyword):
-        self.input_text(By.CSS_SELECTOR, "#inputSearchAuto", keyword, submit=True)
+        """Tìm kiếm sản phẩm theo từ khóa."""
+        search_box = self.wait.until(EC.presence_of_element_located((By.NAME, "q")))
+        search_box.clear()
+        search_box.send_keys(keyword)
+        search_box.submit()
         time.sleep(2)
-    def click_first_result(self):
-        self.click(By.CSS_SELECTOR, ".col-md-3.col-sm-6.col-xs-6.pro-loop")
-    def increase_quantity(self, quantity):
-        try:
-            plus = self.wait.until(EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "input[value='+']")
-            ))
-            for _ in range(int(quantity) - 1):
-                plus.click()
-                time.sleep(0.4)
-        except:
-            print("Không tìm thấy nút '+' hoặc sản phẩm chỉ có 1 lựa chọn.")
+
+    def click_first_product(self):
+        """Mở sản phẩm đầu tiên trong danh sách kết quả."""
+        self.safe_click((By.CSS_SELECTOR, ".product-block a, .product-item a"))
+        time.sleep(2)
 
     def add_to_cart(self):
-        self.click(By.CSS_SELECTOR, "#add-to-cart")
+        """Click nút 'Thêm vào giỏ hàng'."""
+        self.safe_click(self.ADD_TO_CART)
+        time.sleep(1.5)
 
-    def view_cart(self):
-        self.click(By.CSS_SELECTOR, ".linktocart.button.dark")
+    def go_to_checkout_from_popup(self):
+        """Từ popup giỏ hàng → tới trang checkout."""
+        try:
+            self.safe_click(self.CHECKOUT_BTN)
+        except TimeoutException:
+            print(" Popup không hiện → chuyển thẳng sang trang checkout.")
+            self.driver.get("https://swe.vn/checkout")
+        time.sleep(2)
 
-    def get_cart_message(self):
-        return self.get_text(By.CSS_SELECTOR, "div[class='header-page'] h1")
+    def fill_checkout_form(self, name, phone, email, province, address):
+        """Điền thông tin vào form thanh toán."""
+        self._type(self.NAME, name)
+        self._type(self.PHONE, phone)
+        self._type(self.EMAIL, email)
+        self._type(self.PROVINCE, province)
+        self._type(self.ADDRESS, address)
+        time.sleep(1)
+
+    def submit_order(self):
+        """Nhấn nút 'Đặt hàng'."""
+        self.safe_click(self.SUBMIT_BTN)
+        time.sleep(2)
+
+    # ================== LẤY THÔNG BÁO LỖI ==================
+    def _get_error_by_text(self, keyword):
+        """
+        Tìm thông báo lỗi có chứa từ khóa (VD: 'họ tên', 'điện thoại', 'email', 'địa chỉ', 'tỉnh').
+        Cấu trúc thực tế: <div data-slot="error-message" class="text-tiny text-danger">...</div>
+        """
+        try:
+            xpath = (
+                "//div[@data-slot='error-message' and "
+                f"contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{keyword.lower()}')]"
+            )
+            el = WebDriverWait(self.driver, 5).until(
+                EC.visibility_of_element_located((By.XPATH, xpath))
+            )
+            return el.text.strip()
+        except TimeoutException:
+            return ""
+
+    # ====== HÀM LẤY LỖI CHI TIẾT CHO TỪNG FIELD ======
+    def get_name_error(self):
+        return self._get_error_by_text("họ tên")
+
+    def get_phone_error(self):
+        """
+        Bắt lỗi 'Vui lòng nhập số điện thoại' (locator động của React).
+        Ưu tiên lấy qua div[@data-slot='error-message'], fallback bằng HTML5 validation.
+        """
+        try:
+            msg = self._get_error_by_text("số điện thoại") or self._get_error_by_text("điện thoại")
+            if msg:
+                return msg
+            # fallback HTML5 validation (rare case)
+            phone_input = self.driver.find_element(*self.PHONE)
+            validation = phone_input.get_attribute("validationMessage")
+            if validation:
+                return validation
+        except Exception:
+            pass
+        return ""
+
+    def get_email_error(self):
+        return self._get_error_by_text("email")
+
+    def get_address_error(self):
+        return self._get_error_by_text("địa chỉ")
+
+    def get_province_error(self):
+        """Lỗi thiếu tỉnh/thành phố."""
+        return self._get_error_by_text("tỉnh") or self._get_error_by_text("thành phố")
